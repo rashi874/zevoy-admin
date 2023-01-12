@@ -1,16 +1,14 @@
+import { lazy, Suspense } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
-// layouts
-import DashboardLayout from './layouts/dashboard';
-import SimpleLayout from './layouts/simple';
-//
-import BlogPage from './pages/BlogPage';
-import UserPage from './pages/UserPage';
-import LoginPage from './pages/LoginPage';
-import Page404 from './pages/Page404';
-import ProductsPage from './pages/ProductsPage';
-import DashboardAppPage from './pages/DashboardAppPage';
 
 // ----------------------------------------------------------------------
+
+const Loadable = (Component) => (props) =>
+  (
+    <Suspense fallback={<h1>loading</h1>}>
+      <Component {...props} />
+    </Suspense>
+  );
 
 export default function Router() {
   const routes = useRoutes([
@@ -21,7 +19,20 @@ export default function Router() {
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'user', element: <UserPage /> },
-        { path: 'products', element: <ProductsPage /> },
+        {
+          path: 'products',
+          children: [
+            { path: '', element: <ProductsPage /> },
+            { path: 'create', element: <CreateProduct /> },
+          ],
+        },
+        {
+          path: 'category',
+          children: [
+            { path: '', element: <ProductsPage /> },
+            { path: 'create', element: <CreateCategory /> },
+          ],
+        },
         { path: 'blog', element: <BlogPage /> },
       ],
     },
@@ -45,3 +56,16 @@ export default function Router() {
 
   return routes;
 }
+
+// layouts
+const DashboardLayout = Loadable(lazy(() => import('./layouts/dashboard')));
+const SimpleLayout = Loadable(lazy(() => import('./layouts/simple')));
+
+const BlogPage = Loadable(lazy(() => import('./pages/BlogPage')));
+const UserPage = Loadable(lazy(() => import('./pages/UserPage')));
+const LoginPage = Loadable(lazy(() => import('./pages/LoginPage')));
+const Page404 = Loadable(lazy(() => import('./pages/Page404')));
+const ProductsPage = Loadable(lazy(() => import('./pages/products/ProductsPage')));
+const CreateProduct = Loadable(lazy(() => import('./pages/products/CreateProduct')));
+const CreateCategory = Loadable(lazy(() => import('./pages/category/CreateCategory')));
+const DashboardAppPage = Loadable(lazy(() => import('./pages/DashboardAppPage')));

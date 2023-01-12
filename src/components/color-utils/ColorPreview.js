@@ -11,7 +11,7 @@ ColorPreview.propTypes = {
   colors: PropTypes.arrayOf(PropTypes.string),
 };
 
-export default function ColorPreview({ colors, limit = 3, sx }) {
+export default function   ColorPreview({ colors, limit = 3, sx }) {
   const showColor = colors.slice(0, limit);
 
   const moreColor = colors.length - limit;
